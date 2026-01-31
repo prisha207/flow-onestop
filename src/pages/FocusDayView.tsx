@@ -17,8 +17,6 @@ const FocusDayView = () => {
   const needsAttentionEmails = getNeedsAttentionEmails();
   const canWaitEmails = getCanWaitEmails();
   const todaysMeetings = getTodaysMeetings();
-  
-  const totalAttentionItems = carryoverEmails.length + needsAttentionEmails.length;
 
   return (
     <PageLayout>
@@ -28,7 +26,7 @@ const FocusDayView = () => {
           <h2 className="text-2xl font-bold text-foreground mb-2">Focus Day View</h2>
           <div className="flex items-center gap-3">
             <span className="date-display">Sunday, February 1</span>
-            <span className="pill">{totalAttentionItems} items need attention</span>
+            <span className="pill">{carryoverEmails.length} items need attention</span>
           </div>
         </section>
 
