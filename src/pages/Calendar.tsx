@@ -67,20 +67,20 @@ const Calendar = () => {
 
         <div className="grid grid-cols-5 gap-6">
           {/* Calendar Grid */}
-          <div className="col-span-3 bg-card border border-border rounded-2xl p-4">
+          <div className="col-span-3 bg-card border border-border rounded-2xl p-5">
             {/* Weekday Headers */}
-            <div className="grid grid-cols-7 gap-1 mb-1">
+            <div className="grid grid-cols-7 gap-1 mb-2">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                <div key={day} className="text-center text-xs font-medium text-muted-foreground py-1">
+                <div key={day} className="text-center text-xs font-medium text-muted-foreground py-2">
                   {day}
                 </div>
               ))}
             </div>
 
             {/* Days Grid */}
-            <div className="grid grid-cols-7 gap-0.5">
+            <div className="grid grid-cols-7 gap-1">
               {paddingDays.map((_, index) => (
-                <div key={`pad-${index}`} className="h-14" />
+                <div key={`pad-${index}`} className="h-16" />
               ))}
               {days.map((day) => {
                 const dayEvents = getEventsForDay(day);
@@ -91,7 +91,7 @@ const Calendar = () => {
                   <button
                     key={day.toISOString()}
                     onClick={() => setSelectedDate(day)}
-                    className={`h-14 w-full flex flex-col items-start p-1 rounded transition-all ${
+                    className={`h-16 w-full flex flex-col items-start p-1.5 rounded-lg transition-all ${
                       isSelected
                         ? 'bg-primary/20 ring-1 ring-primary'
                         : isToday
