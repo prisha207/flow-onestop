@@ -65,13 +65,13 @@ const Calendar = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-5 gap-6">
           {/* Calendar Grid */}
-          <div className="col-span-2 bg-card border border-border rounded-2xl p-6">
+          <div className="col-span-3 bg-card border border-border rounded-2xl p-4">
             {/* Weekday Headers */}
-            <div className="grid grid-cols-7 gap-1 mb-2">
+            <div className="grid grid-cols-7 gap-1 mb-1">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
+                <div key={day} className="text-center text-xs font-medium text-muted-foreground py-1">
                   {day}
                 </div>
               ))}
@@ -80,7 +80,7 @@ const Calendar = () => {
             {/* Days Grid */}
             <div className="grid grid-cols-7 gap-1">
               {paddingDays.map((_, index) => (
-                <div key={`pad-${index}`} className="h-10" />
+                <div key={`pad-${index}`} className="h-20" />
               ))}
               {days.map((day) => {
                 const dayEvents = getEventsForDay(day);
@@ -91,29 +91,40 @@ const Calendar = () => {
                   <button
                     key={day.toISOString()}
                     onClick={() => setSelectedDate(day)}
-                    className={`h-10 w-full flex items-center justify-center rounded-lg transition-all relative ${
+                    className={`h-20 w-full flex flex-col items-start p-1 rounded-lg transition-all ${
                       isSelected
-                        ? 'bg-primary text-primary-foreground'
+                        ? 'bg-primary/20 ring-2 ring-primary'
                         : isToday
-                        ? 'bg-secondary text-foreground'
+                        ? 'bg-secondary'
                         : isSameMonth(day, currentDate)
-                        ? 'hover:bg-secondary text-foreground'
-                        : 'text-muted-foreground'
+                        ? 'hover:bg-secondary/50'
+                        : 'opacity-40'
                     }`}
                   >
-                    <span className="text-sm font-medium">{format(day, 'd')}</span>
-                    {dayEvents.length > 0 && (
-                      <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
-                        {dayEvents.slice(0, 3).map((event) => (
-                          <div
-                            key={event.id}
-                            className={`w-1.5 h-1.5 rounded-full ${
-                              isSelected ? 'bg-primary-foreground' : getEventColor(event.type)
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    )}
+                    <span className={`text-xs font-medium mb-0.5 ${
+                      isSelected ? 'text-primary' : isToday ? 'text-foreground' : 'text-foreground'
+                    }`}>
+                      {format(day, 'd')}
+                    </span>
+                    <div className="w-full space-y-0.5 overflow-hidden">
+                      {dayEvents.slice(0, 2).map((event) => (
+                        <div
+                          key={event.id}
+                          className={`text-[10px] px-1 py-0.5 rounded truncate ${
+                            event.type === 'deadline' 
+                              ? 'bg-destructive/20 text-destructive' 
+                              : 'bg-primary/20 text-primary'
+                          }`}
+                        >
+                          {event.title}
+                        </div>
+                      ))}
+                      {dayEvents.length > 2 && (
+                        <span className="text-[10px] text-muted-foreground">
+                          +{dayEvents.length - 2} more
+                        </span>
+                      )}
+                    </div>
                   </button>
                 );
               })}
@@ -121,7 +132,7 @@ const Calendar = () => {
           </div>
 
           {/* Day Details */}
-          <div className="col-span-1 space-y-4">
+          <div className="col-span-2 space-y-4">
             <div className="bg-card border border-border rounded-2xl p-4">
               <h3 className="font-semibold text-foreground mb-3">
                 {selectedDate ? format(selectedDate, 'EEEE, MMMM d') : 'Select a date'}
