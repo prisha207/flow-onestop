@@ -78,9 +78,9 @@ const Calendar = () => {
             </div>
 
             {/* Days Grid */}
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-0.5">
               {paddingDays.map((_, index) => (
-                <div key={`pad-${index}`} className="h-20" />
+                <div key={`pad-${index}`} className="h-14" />
               ))}
               {days.map((day) => {
                 const dayEvents = getEventsForDay(day);
@@ -91,9 +91,9 @@ const Calendar = () => {
                   <button
                     key={day.toISOString()}
                     onClick={() => setSelectedDate(day)}
-                    className={`h-20 w-full flex flex-col items-start p-1 rounded-lg transition-all ${
+                    className={`h-14 w-full flex flex-col items-start p-1 rounded transition-all ${
                       isSelected
-                        ? 'bg-primary/20 ring-2 ring-primary'
+                        ? 'bg-primary/20 ring-1 ring-primary'
                         : isToday
                         ? 'bg-secondary'
                         : isSameMonth(day, currentDate)
@@ -101,28 +101,20 @@ const Calendar = () => {
                         : 'opacity-40'
                     }`}
                   >
-                    <span className={`text-xs font-medium mb-0.5 ${
-                      isSelected ? 'text-primary' : isToday ? 'text-foreground' : 'text-foreground'
+                    <span className={`text-[11px] font-medium ${
+                      isSelected ? 'text-primary' : 'text-foreground'
                     }`}>
                       {format(day, 'd')}
                     </span>
-                    <div className="w-full space-y-0.5 overflow-hidden">
-                      {dayEvents.slice(0, 2).map((event) => (
-                        <div
-                          key={event.id}
-                          className={`text-[10px] px-1 py-0.5 rounded truncate ${
-                            event.type === 'deadline' 
-                              ? 'bg-destructive/20 text-destructive' 
-                              : 'bg-primary/20 text-primary'
-                          }`}
-                        >
-                          {event.title}
+                    <div className="w-full overflow-hidden flex-1">
+                      {dayEvents.length > 0 && (
+                        <div className={`text-[9px] leading-tight px-0.5 rounded truncate mt-0.5 ${
+                          dayEvents[0].type === 'deadline' 
+                            ? 'bg-destructive/20 text-destructive' 
+                            : 'bg-primary/20 text-primary'
+                        }`}>
+                          {dayEvents.length === 1 ? dayEvents[0].title : `${dayEvents.length} events`}
                         </div>
-                      ))}
-                      {dayEvents.length > 2 && (
-                        <span className="text-[10px] text-muted-foreground">
-                          +{dayEvents.length - 2} more
-                        </span>
                       )}
                     </div>
                   </button>
