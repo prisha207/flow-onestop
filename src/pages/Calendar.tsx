@@ -5,8 +5,8 @@ import { calendarEvents, CalendarEvent, emails } from '@/data/mockData';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Calendar = () => {
-  const [currentDate, setCurrentDate] = useState(new Date(2025, 1, 1));
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date(2025, 1, 1));
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 1, 1));
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date(2026, 1, 1));
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -21,8 +21,11 @@ const Calendar = () => {
   };
 
   const selectedEvents = selectedDate ? getEventsForDay(selectedDate) : [];
+  // Only show emails that are related to the selected day's events
   const selectedEmails = selectedDate 
-    ? emails.filter(e => isSameDay(e.timestamp, selectedDate))
+    ? emails.filter(e => 
+        selectedEvents.some(event => e.relatedMeetingId === event.id)
+      )
     : [];
 
   const goToPrevMonth = () => setCurrentDate(subMonths(currentDate, 1));
@@ -77,18 +80,18 @@ const Calendar = () => {
             {/* Days Grid */}
             <div className="grid grid-cols-7 gap-1">
               {paddingDays.map((_, index) => (
-                <div key={`pad-${index}`} className="aspect-square" />
+                <div key={`pad-${index}`} className="h-10" />
               ))}
               {days.map((day) => {
                 const dayEvents = getEventsForDay(day);
                 const isSelected = selectedDate && isSameDay(day, selectedDate);
-                const isToday = isSameDay(day, new Date(2025, 1, 1));
+                const isToday = isSameDay(day, new Date(2026, 1, 1));
 
                 return (
                   <button
                     key={day.toISOString()}
                     onClick={() => setSelectedDate(day)}
-                    className={`aspect-square p-1 rounded-xl transition-all relative ${
+                    className={`h-10 w-full flex items-center justify-center rounded-lg transition-all relative ${
                       isSelected
                         ? 'bg-primary text-primary-foreground'
                         : isToday
