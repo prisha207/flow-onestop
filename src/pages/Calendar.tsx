@@ -65,9 +65,9 @@ const Calendar = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-5 gap-6">
+        <div className="grid grid-cols-5 gap-6 items-start">
           {/* Calendar Grid */}
-          <div className="col-span-3 bg-card border border-border rounded-2xl p-5">
+          <div className="col-span-3 bg-card border border-border rounded-2xl p-5 min-h-[420px]">
             {/* Weekday Headers */}
             <div className="grid grid-cols-7 gap-1 mb-2">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
