@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Email } from '@/data/mockData';
+import { useAppContext } from '@/context/AppContext';
 
 interface ReplyDraftDialogProps {
   open: boolean;
@@ -21,6 +22,7 @@ interface ReplyDraftDialogProps {
 
 const ReplyDraftDialog = ({ open, onOpenChange, email }: ReplyDraftDialogProps) => {
   const [body, setBody] = useState('');
+  const { addDraft } = useAppContext();
 
   const handleSend = () => {
     if (!body.trim()) {
@@ -33,7 +35,17 @@ const ReplyDraftDialog = ({ open, onOpenChange, email }: ReplyDraftDialogProps) 
   };
 
   const handleSaveDraft = () => {
+    if (!email) return;
+    addDraft({
+      id: `draft-${email.id}`,
+      to: email.sender,
+      toEmail: email.senderEmail,
+      subject: `Re: ${email.subject}`,
+      body,
+      savedAt: new Date(),
+    });
     toast.success('Draft saved');
+    setBody('');
     onOpenChange(false);
   };
 
@@ -44,9 +56,7 @@ const ReplyDraftDialog = ({ open, onOpenChange, email }: ReplyDraftDialogProps) 
       <DialogContent className="sm:max-w-[550px]">
         <DialogHeader>
           <DialogTitle>Reply</DialogTitle>
-          <DialogDescription>
-            Replying to {email.sender}
-          </DialogDescription>
+          <DialogDescription>Replying to {email.sender}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -54,12 +64,10 @@ const ReplyDraftDialog = ({ open, onOpenChange, email }: ReplyDraftDialogProps) 
             <label className="text-sm font-medium text-foreground">To</label>
             <Input value={email.senderEmail} readOnly className="bg-secondary" />
           </div>
-
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Subject</label>
             <Input value={`Re: ${email.subject}`} readOnly className="bg-secondary" />
           </div>
-
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Message</label>
             <Textarea
@@ -69,7 +77,6 @@ const ReplyDraftDialog = ({ open, onOpenChange, email }: ReplyDraftDialogProps) 
               className="min-h-[150px]"
             />
           </div>
-
           <div className="p-3 rounded-lg bg-secondary text-sm text-muted-foreground border border-border">
             <p className="font-medium text-foreground mb-1">Original message from {email.sender}:</p>
             <p>{email.summary}</p>
@@ -77,9 +84,7 @@ const ReplyDraftDialog = ({ open, onOpenChange, email }: ReplyDraftDialogProps) 
         </div>
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={handleSaveDraft}>
-            Save Draft
-          </Button>
+          <Button variant="outline" onClick={handleSaveDraft}>Save Draft</Button>
           <Button onClick={handleSend}>Send Reply</Button>
         </DialogFooter>
       </DialogContent>

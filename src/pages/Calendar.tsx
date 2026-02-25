@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
 import PageLayout from '@/components/layout/PageLayout';
 import { calendarEvents, CalendarEvent, emails } from '@/data/mockData';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useAppContext } from '@/context/AppContext';
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date(2026, 1, 1));
@@ -16,8 +17,11 @@ const Calendar = () => {
   const startDayOfWeek = monthStart.getDay();
   const paddingDays = Array(startDayOfWeek).fill(null);
 
+  const { scheduledEvents } = useAppContext();
+  const allEvents = useMemo(() => [...calendarEvents, ...scheduledEvents], [scheduledEvents]);
+
   const getEventsForDay = (date: Date): CalendarEvent[] => {
-    return calendarEvents.filter(event => isSameDay(event.date, date));
+    return allEvents.filter(event => isSameDay(event.date, date));
   };
 
   const selectedEvents = selectedDate ? getEventsForDay(selectedDate) : [];
