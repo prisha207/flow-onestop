@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 import PageLayout from '@/components/layout/PageLayout';
 import { emails, Email, getMeetingById } from '@/data/mockData';
 import { Mail, MailOpen } from 'lucide-react';
@@ -120,10 +121,10 @@ const Mailbox = () => {
                 </div>
 
                 <div className="flex gap-2 mt-6">
-                  <button className="action-btn-secondary">Reply</button>
-                  <button className="action-btn-secondary">Forward</button>
-                  <button className="action-btn-secondary">Schedule</button>
-                  <button className="action-btn-primary">Mark as Handled</button>
+                  <button onClick={() => toast.success('Reply drafted')} className="action-btn-secondary">Reply</button>
+                  <button onClick={() => toast.success('Email forwarded')} className="action-btn-secondary">Forward</button>
+                  <button onClick={() => toast.success('Email scheduled')} className="action-btn-secondary">Schedule</button>
+                  <button onClick={() => { toast.success('Marked as handled'); setSelectedEmail(null); }} className="action-btn-primary">Mark as Handled</button>
                 </div>
               </div>
             ) : (
