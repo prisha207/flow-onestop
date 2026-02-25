@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import PageLayout from '@/components/layout/PageLayout';
 import { emails, Email, getMeetingById } from '@/data/mockData';
 import { Mail, MailOpen } from 'lucide-react';
+import ScheduleDialog from '@/components/dialogs/ScheduleDialog';
+import ReplyDraftDialog from '@/components/dialogs/ReplyDraftDialog';
 
 const Mailbox = () => {
   const [searchParams] = useSearchParams();
@@ -12,6 +14,9 @@ const Mailbox = () => {
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(
     selectedEmailId ? emails.find(e => e.id === selectedEmailId) || null : null
   );
+  const [handledIds, setHandledIds] = useState<Set<string>>(new Set());
+  const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [replyOpen, setReplyOpen] = useState(false);
 
   const categories = [
     { label: 'All', filter: () => true },
@@ -22,13 +27,20 @@ const Mailbox = () => {
   ];
 
   const [activeCategory, setActiveCategory] = useState('All');
-  const filteredEmails = emails.filter(
-    categories.find(c => c.label === activeCategory)?.filter || (() => true)
-  );
+  const filteredEmails = emails
+    .filter(e => !handledIds.has(e.id))
+    .filter(categories.find(c => c.label === activeCategory)?.filter || (() => true));
 
   const relatedMeeting = selectedEmail?.relatedMeetingId 
     ? getMeetingById(selectedEmail.relatedMeetingId)
     : null;
+
+  const handleMarkHandled = () => {
+    if (!selectedEmail) return;
+    setHandledIds(prev => new Set(prev).add(selectedEmail.id));
+    toast.success('Marked as handled');
+    setSelectedEmail(null);
+  };
 
   return (
     <PageLayout>
@@ -121,10 +133,10 @@ const Mailbox = () => {
                 </div>
 
                 <div className="flex gap-2 mt-6">
-                  <button onClick={() => toast.success('Reply drafted')} className="action-btn-secondary">Reply</button>
+                  <button onClick={() => setReplyOpen(true)} className="action-btn-secondary">Reply</button>
                   <button onClick={() => toast.success('Email forwarded')} className="action-btn-secondary">Forward</button>
-                  <button onClick={() => toast.success('Email scheduled')} className="action-btn-secondary">Schedule</button>
-                  <button onClick={() => { toast.success('Marked as handled'); setSelectedEmail(null); }} className="action-btn-primary">Mark as Handled</button>
+                  <button onClick={() => setScheduleOpen(true)} className="action-btn-secondary">Schedule</button>
+                  <button onClick={handleMarkHandled} className="action-btn-primary">Mark as Handled</button>
                 </div>
               </div>
             ) : (
@@ -135,6 +147,17 @@ const Mailbox = () => {
           </div>
         </div>
       </div>
+
+      <ScheduleDialog
+        open={scheduleOpen}
+        onOpenChange={setScheduleOpen}
+        emailSubject={selectedEmail?.subject}
+      />
+      <ReplyDraftDialog
+        open={replyOpen}
+        onOpenChange={setReplyOpen}
+        email={selectedEmail}
+      />
     </PageLayout>
   );
 };
