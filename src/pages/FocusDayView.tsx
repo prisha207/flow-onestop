@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { toast } from 'sonner';
 import PageLayout from '@/components/layout/PageLayout';
 import EmailCard from '@/components/cards/EmailCard';
 import MeetingCard from '@/components/cards/MeetingCard';
@@ -43,6 +44,10 @@ const FocusDayView = () => {
                 email={email}
                 variant="carryover"
                 showAllActions={true}
+                onReply={() => toast.success('Reply drafted')}
+                onSchedule={() => toast.success('Email scheduled')}
+                onSnooze={() => toast.success('Email snoozed')}
+                onMarkHandled={() => toast.success('Marked as handled')}
               />
             ))}
           </div>

@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 import PageLayout from '@/components/layout/PageLayout';
 import { meetings, getRelatedEmails } from '@/data/mockData';
 import { useNavigate } from 'react-router-dom';
@@ -81,7 +82,7 @@ const Meetings = () => {
                         View email context ({relatedEmails.length})
                       </button>
                     )}
-                    <button className="action-btn-primary">
+                    <button onClick={() => toast.success(`Joining "${meeting.title}"...`)} className="action-btn-primary">
                       Join Meeting
                     </button>
                   </div>
