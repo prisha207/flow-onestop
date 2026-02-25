@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useAppContext } from '@/context/AppContext';
 
 interface ScheduleDialogProps {
   open: boolean;
@@ -43,12 +44,27 @@ const timeSlots = Array.from({ length: 24 }, (_, h) =>
 const ScheduleDialog = ({ open, onOpenChange, emailSubject }: ScheduleDialogProps) => {
   const [date, setDate] = useState<Date>();
   const [time, setTime] = useState<string>();
+  const { addScheduledEvent } = useAppContext();
 
   const handleSchedule = () => {
     if (!date || !time) {
       toast.error('Please select both date and time');
       return;
     }
+    const [hours, minutes] = time.split(':').map(Number);
+    const eventDate = new Date(date);
+    eventDate.setHours(hours, minutes, 0, 0);
+    const endDate = new Date(eventDate);
+    endDate.setMinutes(endDate.getMinutes() + 30);
+
+    addScheduledEvent({
+      id: `scheduled-${Date.now()}`,
+      title: emailSubject || 'Scheduled Email',
+      date: eventDate,
+      endDate,
+      type: 'reminder',
+    });
+
     toast.success(`Scheduled for ${format(date, 'MMM d, yyyy')} at ${time}`);
     setDate(undefined);
     setTime(undefined);
@@ -66,7 +82,6 @@ const ScheduleDialog = ({ open, onOpenChange, emailSubject }: ScheduleDialogProp
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Date Picker */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Date</label>
             <Popover>
@@ -95,7 +110,6 @@ const ScheduleDialog = ({ open, onOpenChange, emailSubject }: ScheduleDialogProp
             </Popover>
           </div>
 
-          {/* Time Picker */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Time</label>
             <Select value={time} onValueChange={setTime}>
@@ -117,9 +131,7 @@ const ScheduleDialog = ({ open, onOpenChange, emailSubject }: ScheduleDialogProp
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button onClick={handleSchedule}>Schedule</Button>
         </DialogFooter>
       </DialogContent>
